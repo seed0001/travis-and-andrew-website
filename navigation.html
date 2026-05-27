@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ANDREW</title>
+    <title>Navigate the Void</title>
     <style>
         * {
             margin: 0;
@@ -43,23 +43,23 @@
             to { opacity: 1; }
         }
         
-        .name {
-            font-size: 4rem;
+        .title {
+            font-size: 2.5rem;
             font-weight: 300;
             letter-spacing: 0.2em;
-            margin-bottom: 1rem;
+            margin-bottom: 4rem;
             text-shadow: 0 0 20px rgba(200, 255, 0, 0.3);
             opacity: 0.8;
         }
         
-        .subtitle {
-            font-size: 1.2rem;
-            color: #888;
-            margin-bottom: 3rem;
-            letter-spacing: 0.1em;
+        .nav-buttons {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
         }
         
-        .enter-btn {
+        .nav-btn {
             display: inline-block;
             padding: 1rem 3rem;
             font-size: 1.1rem;
@@ -73,18 +73,19 @@
             border: none;
             position: relative;
             overflow: hidden;
+            min-width: 250px;
         }
         
-        .enter-btn:hover {
+        .nav-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 40px rgba(200, 255, 0, 0.6);
         }
         
-        .enter-btn:active {
+        .nav-btn:active {
             transform: translateY(-1px);
         }
         
-        .enter-btn::before {
+        .nav-btn::before {
             content: '';
             position: absolute;
             top: 0;
@@ -95,20 +96,34 @@
             transition: left 0.5s;
         }
         
-        .enter-btn:hover::before {
+        .nav-btn:hover::before {
             left: 100%;
         }
         
+        .back-link {
+            display: inline-block;
+            margin-top: 3rem;
+            font-size: 0.8rem;
+            color: #666;
+            text-decoration: none;
+            letter-spacing: 0.1em;
+        }
+        
+        .back-link:hover {
+            color: #e8e8e8;
+        }
+        
         @media (max-width: 768px) {
-            .name {
-                font-size: 2.5rem;
+            .title {
+                font-size: 1.8rem;
             }
-            .subtitle {
-                font-size: 1rem;
+            .nav-buttons {
+                gap: 1rem;
             }
-            .enter-btn {
+            .nav-btn {
                 padding: 0.8rem 2rem;
                 font-size: 1rem;
+                min-width: 200px;
             }
         }
     </style>
@@ -117,9 +132,14 @@
     <canvas id="starfield"></canvas>
     
     <div class="content">
-        <h1 class="name">ANDREW</h1>
-        <p class="subtitle">A new kind of presence</p>
-        <a href="navigation.html" class="enter-btn">Enter the Void</a>
+        <h1 class="title">NAVIGATE THE VOID</h1>
+        <div class="nav-buttons">
+            <a href="creator.html" class="nav-btn">Meet the Creator</a>
+            <a href="index.html" class="nav-btn">Meet Andrew</a>
+            <a href="#" class="nav-btn">Solan</a>
+            <a href="#" class="nav-btn">Luna</a>
+        </div>
+        <a href="index.html" class="back-link">← Back to Home</a>
     </div>
 
     <script>
