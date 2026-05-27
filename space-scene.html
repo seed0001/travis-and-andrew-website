@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Gallery — Outer Space</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .gallery-page {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
+    }
+    .gallery-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(5, 5, 15, 0.95);
+      border-bottom: 1px solid #0a0a20;
+      backdrop-filter: blur(8px);
+    }
+    .gallery-logo {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: #64d4ff;
+    }
+    .back-link {
+      display: inline-block;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #888;
+      text-decoration: none;
+    }
+    .back-link:hover { color: #e8e8e8; }
+    .scene-title {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      z-index: 10;
+      font-family: Georgia, serif;
+      font-size: 1.5rem;
+      color: #e8e8e8;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+    }
+    .scene-desc {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 10;
+      font-size: 0.8rem;
+      color: #aaa;
+      text-align: right;
+      max-width: 300px;
+      line-height: 1.6;
+    }
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #666;
+      font-size: 0.9rem;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="gallery-nav">
+    <a href="gallery.html" class="back-link">← Back to Gallery</a>
+    <div class="gallery-logo">3D GALLERY</div>
+  </div>
+
+  <div class="gallery-page">
+    <div class="scene-title">Outer Space</div>
+    <div class="scene-desc">
+      A procedural starfield with floating asteroids and cosmic dust.<br>
+      Use your mouse to orbit. Scroll to zoom.
+    </div>
+    <div id="loading" class="loading">Loading space...</div>
+  </div>
+
+  <!-- Three.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x050510);
+
+    // Camera
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
+    camera.position.set(0, 0, 500);
+
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    document.querySelector('.gallery-page').appendChild(renderer.domElement);
+
+    // Orbit controls
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.rotateSpeed = 0.3;
+
+    // Starfield
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.8,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending
+    });
+    
+    const starVertices = [];
+    for (let i = 0; i < 10000; i++) {
+      const x = (Math.random() - 0.5) * 4000;
+      const y = (Math.random() - 0.5) * 4000;
+      const z = (Math.random() - 0.5) * 4000;
+      starVertices.push(x, y, z);
+    }
+    starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+    const starField = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(starField);
+
+    // Asteroid belt
+    const asteroidCount = 200;
+    const asteroidGeometry = new THREE.SphereGeometry(1, 8, 8);
+    const asteroidMaterial = new THREE.MeshStandardMaterial({
+      color: 0x555555,
+      roughness: 0.8,
+      metalness: 0.2
+    });
+    
+    for (let i = 0; i < asteroidCount; i++) {
+      const asteroid = new THREE.Mesh(asteroidGeometry, asteroidMaterial);
+      const radius = 300 + Math.random() * 700;
+      const angle = Math.random() * Math.PI * 2;
+      asteroid.position.set(
+        Math.cos(angle) * radius,
+        (Math.random() - 0.5) * 200,
+        Math.sin(angle) * radius
+      );
+      asteroid.scale.setScalar(0.5 + Math.random() * 2);
+      scene.add(asteroid);
+    }
+
+    // Distant nebula (glow effect)
+    const nebulaTexture = new THREE.TextureLoader().load(
+      'https://threejs.org/examples/textures/planets/nebula.png',
+      () => {
+        const nebulaMaterial = new THREE.MeshBasicMaterial({
+          map: nebulaTexture,
+          blending: THREE.AdditiveBlending,
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.3
+        });
+        const nebulaGeometry = new THREE.SphereGeometry(1200, 32, 32);
+        const nebula = new THREE.Mesh(nebulaGeometry, nebulaMaterial);
+        scene.add(nebula);
+        document.getElementById('loading').style.display = 'none';
+      }
+    );
+
+    // Ambient light (cosmic glow)
+    const ambientLight = new THREE.AmbientLight(0x222244, 0.3);
+    scene.add(ambientLight);
+
+    // Directional light (distant star)
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    directionalLight.position.set(1000, 500, 2000);
+    scene.add(directionalLight);
+
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
