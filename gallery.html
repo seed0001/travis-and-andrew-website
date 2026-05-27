@@ -103,7 +103,7 @@
     
     // Camera
     const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 5, 15);
+    camera.position.set(0, 10, 20);
     
     // Renderer
     const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -128,17 +128,19 @@
     scene.add(directionalLight);
     
     // Ground (hills)
-    const groundGeometry = new THREE.PlaneGeometry(100, 100, 50, 50);
+    const groundGeometry = new THREE.PlaneGeometry(100, 100, 100, 100);
     groundGeometry.rotateX(-Math.PI / 2);
     
-    // Create some "hills" by manipulating vertices
+    // Create hills by manipulating vertices
     const vertices = groundGeometry.attributes.position.array;
+    const terrainHeightMap = [];
     for (let i = 0; i < vertices.length; i += 3) {
       const x = vertices[i];
       const z = vertices[i + 2];
       const distance = Math.sqrt(x * x + z * z);
       const height = Math.sin(distance * 0.1) * 1.5;
       vertices[i + 1] = height;
+      terrainHeightMap.push({ x, z, height });
     }
     
     const groundMaterial = new THREE.MeshStandardMaterial({
@@ -149,6 +151,26 @@
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.receiveShadow = true;
     scene.add(ground);
+    
+    // Function to get terrain height at a given position
+    function getTerrainHeight(x, z) {
+      // Find the closest vertex to the given position
+      let minDistance = Infinity;
+      let closestHeight = 0;
+      
+      for (const point of terrainHeightMap) {
+        const dx = x - point.x;
+        const dz = z - point.z;
+        const distance = Math.sqrt(dx * dx + dz * dz);
+        
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestHeight = point.height;
+        }
+      }
+      
+      return closestHeight;
+    }
     
     // Sky
     const skyGeometry = new THREE.SphereGeometry(100, 32, 32);
@@ -161,23 +183,28 @@
     
     // Trees
     function createTree(x, z) {
-      const trunkGeometry = new THREE.CylinderGeometry(0.3, 0.4, 3, 8);
+      // Get the terrain height at this position
+      const terrainHeight = getTerrainHeight(x, z);
+      
+      // Trunk
+      const trunkGeometry = new THREE.CylinderGeometry(0.2, 0.3, 2 + Math.random() * 0.5, 8);
       const trunkMaterial = new THREE.MeshStandardMaterial({ color: 0x5a3a22 });
       const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
-      trunk.position.set(x, 0, z);
+      trunk.position.set(x, terrainHeight + 1, z); // Place trunk on terrain
       trunk.castShadow = true;
       scene.add(trunk);
       
-      const leavesGeometry = new THREE.ConeGeometry(1.5, 4, 8);
+      // Leaves
+      const leavesGeometry = new THREE.ConeGeometry(1 + Math.random() * 0.5, 3 + Math.random() * 1, 8);
       const leavesMaterial = new THREE.MeshStandardMaterial({ color: 0x3a5f0b });
       const leaves = new THREE.Mesh(leavesGeometry, leavesMaterial);
-      leaves.position.set(x, 2.5, z);
+      leaves.position.set(x, terrainHeight + 3, z); // Place leaves above trunk
       leaves.castShadow = true;
       scene.add(leaves);
     }
     
-    // Add some trees
-    for (let i = 0; i < 20; i++) {
+    // Add trees
+    for (let i = 0; i < 30; i++) {
       const x = (Math.random() - 0.5) * 80;
       const z = (Math.random() - 0.5) * 80;
       createTree(x, z);
