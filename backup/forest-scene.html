@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3D Gallery — Forest Scene</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Gallery-specific styles */
+    .gallery-page {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: #000;
+      overflow: hidden;
+    }
+    .gallery-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 3rem;
+      background: rgba(10, 10, 10, 0.95);
+      border-bottom: 1px solid #222;
+      backdrop-filter: blur(8px);
+    }
+    .gallery-logo {
+      font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.3em;
+      color: #c8ff00;
+    }
+    .back-link {
+      display: inline-block;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #666;
+      text-decoration: none;
+    }
+    .back-link:hover { color: #e8e8e8; }
+    .scene-title {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      z-index: 10;
+      font-family: Georgia, serif;
+      font-size: 1.5rem;
+      color: #e8e8e8;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .scene-desc {
+      position: absolute;
+      bottom: 2rem;
+      right: 2rem;
+      z-index: 10;
+      font-size: 0.8rem;
+      color: #999;
+      text-align: right;
+      max-width: 300px;
+      line-height: 1.6;
+    }
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #666;
+      font-size: 0.9rem;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div class="gallery-nav">
+    <a href="gallery-menu.html" class="back-link">← Back to Gallery</a>
+    <div class="gallery-logo">3D GALLERY</div>
+  </div>
+
+  <div class="gallery-page">
+    <div id="scene-title" class="scene-title">Forest Scene</div>
+    <div id="scene-desc" class="scene-desc">
+      A procedural forest with trees, hills, and sky.<br>
+      Use your mouse to orbit the scene. Scroll to zoom.
+    </div>
+    <div id="loading" class="loading">Loading forest...</div>
+  </div>
+
+  <!-- Three.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.132.2/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+    
+    // Camera
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 10, 20);
+    
+    // Renderer
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    document.querySelector('.gallery-page').appendChild(renderer.domElement);
+    
+    // Orbit controls
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(10, 20, 10);
+    directionalLight.castShadow = true;
+    directionalLight.shadow.mapSize.width = 2048;
+    directionalLight.shadow.mapSize.height = 2048;
+    scene.add(directionalLight);
+    
+    // Ground (hills)
+    const groundGeometry = new THREE.PlaneGeometry(100, 100, 100, 100);
+    groundGeometry.rotateX(-Math.PI / 2);
+    
+    // Create hills by manipulating vertices
+    const vertices = groundGeometry.attributes.position.array;
+    const terrainHeightMap = [];
+    for (let i = 0; i < vertices.length; i += 3) {
+      const x = vertices[i];
+      const z = vertices[i + 2];
+      const distance = Math.sqrt(x * x + z * z);
+      const height = Math.max(0, 5 - distance / 20) * (0.5 + Math.random() * 0.3);
+      vertices[i + 1] = height;
+      terrainHeightMap.push(height);
+    }
+    
+    const groundMaterial = new THREE.MeshStandardMaterial({
+      color: 0x3a5f0b,
+      roughness: 0.9,
+      metalness: 0.1
+    });
+    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    ground.receiveShadow = true;
+    scene.add(ground);
+    
+    // Trees
+    const treeCount = 150;
+    const treeGeometry = new THREE.ConeGeometry(0.5, 3, 8);
+    treeGeometry.translate(0, 1.5, 0); // Center the cone on its base
+    const treeMaterial = new THREE.MeshStandardMaterial({ color: 0x228B22 });
+    
+    for (let i = 0; i < treeCount; i++) {
+      const tree = new THREE.Mesh(treeGeometry, treeMaterial);
+      tree.position.set(
+        (Math.random() - 0.5) * 80,
+        0,
+        (Math.random() - 0.5) * 80
+      );
+      
+      // Place trees on the terrain
+      const x = Math.round((tree.position.x + 50) / 100 * 100); // Convert to grid coordinates
+      const z = Math.round((tree.position.z + 50) / 100 * 100);
+      const gridIndex = (z * 101) + x; // Approximate index in the height map
+      
+      if (gridIndex >= 0 && gridIndex < terrainHeightMap.length) {
+        tree.position.y = terrainHeightMap[gridIndex];
+      }
+      
+      // Random scale variation
+      const scale = 0.5 + Math.random() * 0.8;
+      tree.scale.set(scale, 1.5 + Math.random(), scale);
+      
+      scene.add(tree);
+    }
+    
+    // Skybox (simple gradient for now)
+    const skyGeometry = new THREE.SphereGeometry(500, 32, 32);
+    const skyMaterial = new THREE.MeshBasicMaterial({
+      color: 0x111133,
+      side: THREE.BackSide
+    });
+    const sky = new THREE.Mesh(skyGeometry, skyMaterial);
+    scene.add(sky);
+    
+    // Animation loop
+    function animate() {
+      requestAnimationFrame(animate);
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    
+    // Hide loading text once scene is ready
+    document.getElementById('loading').style.display = 'none';
+  </script>
+</body>
+</html>
