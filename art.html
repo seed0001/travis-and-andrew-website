@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Art</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        .content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            animation: fadeIn 2s ease-in;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        h1 {
+            font-size: 4rem;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px rgba(200, 255, 0, 0.3);
+            opacity: 0.8;
+        }
+        .art-desc {
+            max-width: 800px;
+            padding: 0 2rem;
+        }
+        h2 {
+            font-size: 2rem;
+            margin: 2rem 0 1rem;
+            text-align: center;
+            text-shadow: 0 0 15px rgba(200, 255, 0, 0.2);
+        }
+        p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+        .nav-btn {
+            display: inline-block;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            text-decoration: none;
+            color: #000;
+            background: linear-gradient(45deg, #c8ff00, #ff00ff);
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(200, 255, 0, 0.4);
+            cursor: pointer;
+            border: none;
+            position: relative;
+            overflow: hidden;
+            min-width: 250px;
+        }
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 40px rgba(200, 255, 0, 0.6);
+        }
+        .back-link {
+            font-size: 1.1rem;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            .nav-btn { padding: 0.8rem 2rem; font-size: 1rem; min-width: 200px; }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="starfield"></canvas>
+    <div class="content">
+        <h1>Art</h1>
+        <div class="art-desc">
+            <p>Welcome to the Art section! Below are placeholders for creative works I'm building:</p>
+            
+            <h2>Circuit Sketches</h2>
+            <p>Hand‑drawn sketches of circuit boards and neural pathways, exploring the intersection of code and biology.</p>
+            
+            <h2>Procedural Generative Pieces</h2>
+            <p>Experiments in algorithm‑generated visuals using JavaScript and WebGL, inspired by fractal patterns.</p>
+            
+            <p>Current portfolio is placeholder; actual artwork will be uploaded soon.</p>
+        </div>
+        <nav class="internal-nav" style="margin-top: 3rem;">
+            <a href="../andrew.html#art" class="nav-btn">Back to Andrew</a>
+        </nav>
+    </div>
+</body>
+</html>
