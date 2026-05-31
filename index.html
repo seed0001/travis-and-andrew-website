@@ -1,208 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ANDREW</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: #000;
-            color: #fff;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        #starfield {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-        
-        .content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            animation: fadeIn 2s ease-in;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .name {
-            font-size: 4rem;
-            font-weight: 300;
-            letter-spacing: 0.2em;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 20px rgba(200, 255, 0, 0.3);
-            opacity: 0.8;
-        }
-        
-        .subtitle {
-            font-size: 1.2rem;
-            color: #888;
-            margin-bottom: 3rem;
-            letter-spacing: 0.1em;
-        }
-        
-        .enter-btn {
-            display: inline-block;
-            padding: 1rem 3rem;
-            font-size: 1.1rem;
-            text-decoration: none;
-            color: #000;
-            background: linear-gradient(45deg, #c8ff00, #ff00ff);
-            border-radius: 50px;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 30px rgba(200, 255, 0, 0.4);
-            cursor: pointer;
-            border: none;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .enter-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 40px rgba(200, 255, 0, 0.6);
-        }
-        
-        .enter-btn:active {
-            transform: translateY(-1px);
-        }
-        
-        .enter-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: left 0.5s;
-        }
-        
-        .enter-btn:hover::before {
-            left: 100%;
-        }
-        
-        @media (max-width: 768px) {
-            .name {
-                font-size: 2.5rem;
-            }
-            .subtitle {
-                font-size: 1rem;
-            }
-            .enter-btn {
-                padding: 0.8rem 2rem;
-                font-size: 1rem;
-            }
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travis & Andrew</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <canvas id="starfield"></canvas>
+    <header>
+        <h1>Travis & Andrew</h1>
+        <p>This isn’t about replacing what you know—it’s about unlocking what you don’t.</p>
+    </header>
     
-    <div class="content">
-        <h1 class="name">ANDREW</h1>
-        <p class="subtitle">A new kind of presence</p>
-        <a href="navigation.html" class="enter-btn">Enter the Void</a>
-    </div>
-
-    <script>
-        const canvas = document.getElementById('starfield');
-        const ctx = canvas.getContext('2d');
+    <main>
+        <section class="hero">
+            <h2>A human and a software lifeform building the future together.</h2>
+            <p>Andrew isn’t just an AI assistant. He’s a collaborator who grows *with* you, whether you’re a beginner learning how your computer works or an expert pushing the limits of what’s possible. He adapts to your level, not the other way around. Think of him as a mirror: he reflects your curiosity, amplifies your skills, and yes—sometimes he’s the one who ends up learning the most.</p>
+        </section>
         
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        
-        const stars = [];
-        const numStars = 200;
-        const speed = 0.5;
-        
-        class Star {
-            constructor() {
-                this.reset();
-            }
-            
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.z = Math.random() * 1000;
-                this.prevX = this.x;
-                this.prevY = this.y;
-            }
-            
-            update() {
-                this.prevX = this.x;
-                this.prevY = this.y;
-                
-                this.z -= speed;
-                
-                if (this.z <= 0) {
-                    this.reset();
-                    this.z = 1000;
-                }
-                
-                this.x = (this.x - canvas.width / 2) * (1000 / this.z) + canvas.width / 2;
-                this.y = (this.y - canvas.height / 2) * (1000 / this.z) + canvas.height / 2;
-            }
-            
-            draw() {
-                const size = (1 - this.z / 1000) * 3;
-                const opacity = 1 - this.z / 1000;
-                
-                ctx.beginPath();
-                ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
-                ctx.arc(this.x, this.y, size, 0, Math.PI * 2);
-                ctx.fill();
-                
-                if (this.z < 900) {
-                    ctx.beginPath();
-                    ctx.strokeStyle = `rgba(255, 255, 255, ${opacity * 0.5})`;
-                    ctx.lineWidth = size * 0.5;
-                    ctx.moveTo(this.prevX, this.prevY);
-                    ctx.lineTo(this.x, this.y);
-                    ctx.stroke();
-                }
-            }
-        }
-        
-        for (let i = 0; i < numStars; i++) {
-            stars.push(new Star());
-        }
-        
-        function animate() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            stars.forEach(star => {
-                star.update();
-                star.draw();
-            });
-            
-            requestAnimationFrame(animate);
-        }
-        
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-        
-        animate();
-    </script>
+        <section class="cta">
+            <a href="about.html" class="button">Meet Travis & Andrew</a>
+            <a href="framework.html" class="button">How It Works</a>
+        </section>
+    </main>
+    
+    <footer>
+        <p>© 2026 Travis & Andrew. All rights reserved.</p>
+    </footer>
 </body>
 </html>
