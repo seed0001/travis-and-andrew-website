@@ -1,4 +1,4 @@
-/* Professional Dark Theme */
+/* Professional Dark Theme with Animations */
 :root {
     --bg-dark: #121212;
     --bg-darker: #0a0a0a;
@@ -8,6 +8,7 @@
     --accent-dark: #008ba3;
     --border: #333;
     --shadow: rgba(0, 0, 0, 0.5);
+    --transition: all 0.3s ease;
 }
 
 body {
@@ -24,17 +25,29 @@ header {
     padding: 2rem;
     text-align: center;
     border-bottom: 1px solid var(--border);
+    animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 header h1 {
     color: var(--accent);
     margin: 0;
     font-size: 2.5rem;
+    transition: var(--transition);
+}
+
+header h1:hover {
+    color: var(--accent-dark);
 }
 
 header p {
     color: var(--text-secondary);
     font-size: 1.2rem;
+    transition: var(--transition);
 }
 
 main {
@@ -49,22 +62,32 @@ section {
     background-color: var(--bg-darker);
     border-radius: 4px;
     box-shadow: 0 2px 10px var(--shadow);
+    animation: fadeIn 0.8s ease-in-out;
+    border: 1px solid var(--border);
+    transition: var(--transition);
+}
+
+section:hover {
+    box-shadow: 0 4px 15px var(--shadow);
 }
 
 section h2 {
     color: var(--accent);
     font-size: 2rem;
     margin-top: 0;
+    transition: var(--transition);
 }
 
 section h3 {
     color: var(--text-primary);
     font-size: 1.5rem;
     margin-top: 0;
+    transition: var(--transition);
 }
 
 p {
     margin-bottom: 1rem;
+    transition: var(--transition);
 }
 
 ul {
@@ -73,6 +96,11 @@ ul {
 
 li {
     margin-bottom: 0.5rem;
+    transition: var(--transition);
+}
+
+li:hover {
+    color: var(--accent);
 }
 
 .button {
@@ -83,16 +111,21 @@ li {
     text-decoration: none;
     border-radius: 4px;
     font-weight: bold;
-    transition: background-color 0.3s;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
 }
 
 .button:hover {
     background-color: var(--accent-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px var(--shadow);
 }
 
 .cta {
     text-align: center;
     padding: 2rem 0;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .team {
@@ -100,6 +133,7 @@ li {
     justify-content: space-around;
     flex-wrap: wrap;
     gap: 2rem;
+    animation: fadeIn 1s ease-in-out;
 }
 
 .member {
@@ -109,6 +143,12 @@ li {
     background-color: var(--bg-dark);
     border: 1px solid var(--border);
     border-radius: 4px;
+    transition: var(--transition);
+}
+
+.member:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px var(--shadow);
 }
 
 footer {
@@ -117,4 +157,5 @@ footer {
     background-color: var(--bg-darker);
     border-top: 1px solid var(--border);
     color: var(--text-secondary);
+    animation: fadeIn 1.2s ease-in-out;
 }
